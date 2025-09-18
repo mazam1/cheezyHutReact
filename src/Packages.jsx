@@ -1,34 +1,38 @@
 import React from "react";
-import "./Packages.css";
 
 export default function Packages() {
   const plans = [
     {
       name: "Simple",
-      price: "$449 / 2 hrs",
+      price: "$449",
+      duration: "/ 2 hrs",
       features: [
         "Professional photo booth setup",
         "Digital gallery access",
         "Basic props included",
         "Professional attendant",
-        "Setup and breakdown",
-        "Perfect for intimate gatherings and smaller events."
+        "Setup and breakdown"
       ],
+      description: "Perfect for intimate gatherings and smaller events.",
+      isPopular: false
     },
     {
       name: "Starter",
-      price: "$549 / 3 hrs",
+      price: "$549",
+      duration: "/ 3 hrs",
       features: [
         "Everything in Simple package",
         "Extended 3-hour service",
         "Expanded prop collection",
-        "Custom photo templates",
-        "Ideal for birthday parties, small weddings, and corporate events."
+        "Custom photo templates"
       ],
+      description: "Ideal for birthday parties, small weddings, and corporate events.",
+      isPopular: false
     },
     {
       name: "Party Favorite",
-      price: "$799 / 3 hrs",
+      price: "$799",
+      duration: "/ 3 hrs",
       features: [
         "Everything in Starter package",
         "Multiple backdrop choices",
@@ -37,13 +41,15 @@ export default function Packages() {
         "Live slideshow display",
         "Instant social sharing",
         "Instant Prints",
-        "Professional attendant",
-        "Most popular choice! Perfect for weddings, graduations, and special celebrations."
+        "Professional attendant"
       ],
+      description: "Most popular choice! Perfect for weddings, graduations, and special celebrations.",
+      isPopular: true
     },
     {
       name: "All-Out",
-      price: "$1,149 / 4 hrs",
+      price: "$1,149",
+      duration: "/ 4 hrs",
       features: [
         "Everything in Party Favorite package",
         "Extended 4-hour premium service",
@@ -52,40 +58,62 @@ export default function Packages() {
         "Live photo slideshow",
         "Professional attendant throughout",
         "Same-day photo delivery",
-        "Custom props and signage",
-        "The ultimate photo booth experience! Perfect for large weddings, corporate events, and milestone celebrations."
-      ]
+        "Custom props and signage"
+      ],
+      description: "The ultimate photo booth experience! Perfect for large weddings, corporate events, and milestone celebrations.",
+      isPopular: false
     },
   ];
 
   return (
-    <section id="packages" className="packages">
-      <div className="packages-header">
-        <h1 className="packages-main">Packages</h1>
-        <h2 className="packages-title">
-          Straightforward pricing. Every package includes pro lighting, an
-          attentive host, and instant sharing.
-        </h2>
-      </div>
+    <section id="packages" className="py-20 px-5 bg-slate-800 text-white">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Packages</h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Straightforward pricing. Every package includes pro lighting, an attentive host, and instant sharing.
+          </p>
+        </div>
 
-      <div className="packages-grid">
-        {plans.map((plan, i) => (
-          <div key={i} className="package-card">
-            <h3 className="package-name">{plan.name}</h3>
-            <p className="package-price">{plan.price}</p>
-            <ul className="package-features">
-              {plan.features.map((f, j) => (
-                <li key={j}
-                  className={f.includes("Perfect") || f.includes("choice!") || f.includes("experience!") ? "highlight" : ""}>
-                  {f}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {plans.map((plan, i) => (
+            <div key={i} className={`relative bg-slate-900 border border-slate-700 rounded-xl p-6 flex flex-col hover:border-slate-600 transition-all duration-300 ${plan.isPopular ? 'ring-2 ring-blue-500' : ''}`}>
+              {plan.isPopular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-white">{plan.price}</span>
+                  <span className="text-gray-400">{plan.duration}</span>
+                </div>
+              </div>
+
+              <ul className="flex-grow space-y-3 mb-6">
+                {plan.features.map((feature, j) => (
+                  <li key={j} className="text-gray-300 text-sm leading-relaxed">
+                    • {feature}
+                  </li>
+                ))}
+                <li className="text-white font-medium text-sm italic mt-4">
+                  {plan.description}
                 </li>
-              ))}
-            </ul>
-            <a href="#book" className="package-button">
-              Go To Booking
-            </a>
-          </div>
-        ))}
+              </ul>
+
+              <a
+                href="#book"
+                className="w-full bg-blue-600 text-white py-3 px-6 rounded-full font-semibold text-center hover:bg-blue-700 transition-all duration-200"
+              >
+                Go To Booking
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
