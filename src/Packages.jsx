@@ -64,13 +64,15 @@ export default function Packages() {
   return (
     <section id="packages" className="py-12 lg:py-20">
       <div className="container mx-auto px-6">
+        {/* Section Heading */}
         <div className="flex flex-col gap-4 mb-12">
           <h2 
             className="font-bold leading-tight"
             style={{
               fontSize: 'clamp(1.6rem, 1rem + 2.2vw, 2.4rem)',
               lineHeight: '1.2',
-              color: 'var(--foreground)'
+              color: 'var(--foreground)',
+              fontFamily: 'Segoe UI, Roboto, sans-serif'
             }}
           >
             Packages
@@ -79,13 +81,15 @@ export default function Packages() {
             className="leading-relaxed"
             style={{ 
               fontSize: 'clamp(1.05rem, 1rem + 0.6vw, 1.25rem)',
-              color: 'var(--muted)'
+              color: 'var(--muted)',
+              fontFamily: 'Segoe UI, Roboto, sans-serif'
             }}
           >
             Straightforward pricing. Every package includes pro lighting, an attentive host, and instant sharing.
           </p>
         </div>
 
+        {/* Packages Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {plans.map((plan, i) => (
             <div 
@@ -93,57 +97,73 @@ export default function Packages() {
               className="flex flex-col h-full"
               style={{
                 border: '1px solid var(--border)',
-                borderRadius: 'var(--radius)',
+                borderRadius: '12px',
                 background: 'var(--card)',
                 boxShadow: 'var(--shadow)',
-                padding: 'var(--spacing-6)'
+                padding: '1.5rem'
               }}
             >
-              <div className="mb-6">
-                <h3 
-                  className="font-bold mb-2"
+              {/* Name */}
+              <h3 
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: '700',
+                  marginBottom: '0.25rem',
+                  color: 'var(--card-foreground)',
+                  fontFamily: 'Segoe UI, Roboto, sans-serif'
+                }}
+              >
+                {plan.name}
+              </h3>
+
+              {/* Price + Duration */}
+              <p
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: '700',
+                  marginBottom: '1rem',
+                  color: 'var(--card-foreground)',
+                  fontFamily: 'Segoe UI, Roboto, sans-serif'
+                }}
+              >
+                {plan.price} <span style={{ fontWeight: '400', color: 'var(--muted)' }}>{plan.duration}</span>
+              </p>
+
+              {/* Features */}
+              <div className="flex-grow mb-6">
+                <p 
                   style={{
-                    fontSize: '1.25rem',
+                    fontSize: '0.95rem',
+                    fontWeight: '600',
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Segoe UI, Roboto, sans-serif',
                     color: 'var(--card-foreground)'
                   }}
                 >
-                  {plan.name}
-                </h3>
-                <div className="flex items-baseline gap-1">
-                  <span 
-                    className="font-bold"
-                    style={{
-                      fontSize: '2rem',
-                      fontWeight: '800',
-                      color: 'var(--card-foreground)'
-                    }}
-                  >
-                    {plan.price}
-                  </span>
-                  <span 
-                    className="font-normal"
-                    style={{ color: 'var(--muted)' }}
-                  >
-                    {plan.duration}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex-grow mb-6">
-                <ul className="space-y-2 mb-4">
+                  {plan.name} - {plan.price} {plan.duration}
+                </p>
+                <ul className="list-disc pl-5 space-y-2 mb-4">
                   {plan.features.map((feature, j) => (
                     <li 
                       key={j} 
-                      className="text-sm leading-relaxed"
-                      style={{ color: 'var(--card-foreground)' }}
+                      style={{ 
+                        fontSize: '0.95rem',
+                        color: 'var(--card-foreground)',
+                        lineHeight: '1.5',
+                        fontFamily: 'Segoe UI, Roboto, sans-serif'
+                      }}
                     >
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <p 
-                  className="text-sm font-medium"
-                  style={{ color: 'var(--card-foreground)' }}
+                  style={{ 
+                    fontSize: '0.95rem',
+                    fontWeight: plan.description.includes("!") ? "500" : "400",
+                    color: 'var(--card-foreground)',
+                    fontFamily: 'Segoe UI, Roboto, sans-serif'
+                  }}
                 >
                   {plan.description.includes('!') ? (
                     <>
@@ -156,19 +176,25 @@ export default function Packages() {
                 </p>
               </div>
 
+              {/* Button */}
               <a
                 href="#book"
-                className="w-full text-center font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
                 style={{
                   background: 'var(--primary)',
                   color: 'var(--primary-foreground)',
                   padding: '0.75rem 1rem',
+                  fontSize: '0.95rem',
+                  fontWeight: '600',
                   borderRadius: '9999px',
-                  boxShadow: 'var(--shadow)',
-                  border: '1px solid transparent',
+                  textAlign: 'center',
+                  display: 'block',
                   textDecoration: 'none',
-                  display: 'block'
+                  fontFamily: 'Segoe UI, Roboto, sans-serif',
+                  border: 'none',
+                  boxShadow: 'var(--shadow)',
+                  transition: 'all 0.2s ease'
                 }}
+                className="hover:-translate-y-0.5"
               >
                 Go To Booking
               </a>

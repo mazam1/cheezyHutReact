@@ -5,8 +5,8 @@ export default function Hero() {
 
   useEffect(() => {
     // Initialize YouTube Player API when component mounts
-    const script = document.createElement('script');
-    script.src = 'https://www.youtube.com/iframe_api';
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(script);
 
     return () => {
@@ -15,51 +15,55 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="py-12 lg:py-20">
+    // Padding 48px top-bottom, 0px left-right
+    <section className="py-12 px-0">
       <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
-          <div className="flex flex-col gap-4">
+        {/* items-start -> text aur video top se align */}
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-start">
+          <div className="flex flex-col gap-10">
             <div className="flex flex-wrap gap-2">
-              <span 
-                className="rounded-full px-3 py-2 text-sm font-medium"
-                style={{ backgroundColor: 'var(--secondary)', color: 'var(--secondary-foreground)' }}
+              <span
+                className="rounded-full px-3 py-2 text-sm font-medium text-white"
+                style={{ backgroundColor: "#6c757d" }}
               >
                 ✨ Studio-quality lighting
               </span>
-              <span 
-                className="rounded-full px-3 py-2 text-sm font-medium"
-                style={{ backgroundColor: 'var(--secondary)', color: 'var(--secondary-foreground)' }}
+              <span
+                className="rounded-full px-3 py-2 text-sm font-medium text-white"
+                style={{ backgroundColor: "#6c757d" }}
               >
                 ⚡ Instant prints & sharing
               </span>
-              <span 
-                className="rounded-full px-3 py-2 text-sm font-medium"
-                style={{ backgroundColor: 'var(--secondary)', color: 'var(--secondary-foreground)' }}
+              <span
+                className="rounded-full px-3 py-2 text-sm font-medium text-white"
+                style={{ backgroundColor: "#6c757d" }}
               >
                 📸 Detroit & beyond
               </span>
             </div>
 
-            <h1 
+            <h1
               className="mb-3 font-bold leading-tight"
-              style={{ 
-                fontSize: 'clamp(2.4rem, 1rem + 4vw, 4rem)',
-                lineHeight: '1.1',
-                letterSpacing: '-0.02em',
-                color: 'var(--foreground)'
+              style={{
+                fontSize: "clamp(2.4rem, 1rem + 4vw, 4rem)",
+                lineHeight: "1.1",
+                letterSpacing: "-0.02em",
+                color: "var(--foreground)",
               }}
             >
               Say Cheezy!
             </h1>
 
-            <p 
+            <p
               className="mb-4 leading-relaxed"
-              style={{ 
-                fontSize: 'clamp(1.05rem, 1rem + 0.6vw, 1.25rem)',
-                color: 'var(--muted)'
+              style={{
+                fontSize: "clamp(1.05rem, 1rem + 0.6vw, 1.25rem)",
+                color: "var(--muted)",
               }}
             >
-              Cheezy Hut brings big-time energy with pro lighting, custom overlays, and instant prints! Perfect for weddings, corporate events, schools, and parties.
+              Cheezy Hut brings big-time energy with pro lighting, custom
+              overlays, and instant prints! Perfect for weddings, corporate
+              events, schools, and parties.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -67,10 +71,10 @@ export default function Hero() {
                 href="#book"
                 className="rounded-full px-4 py-2 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
                 style={{
-                  background: 'var(--primary)',
-                  color: 'var(--primary-foreground)',
-                  boxShadow: 'var(--shadow)',
-                  border: '1px solid transparent'
+                  background: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                  boxShadow: "var(--shadow)",
+                  border: "42px",
                 }}
               >
                 Book Cheezy Hut
@@ -79,10 +83,10 @@ export default function Hero() {
                 href="#packages"
                 className="rounded-full px-4 py-2 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
                 style={{
-                  background: 'var(--card)',
-                  color: 'var(--card-foreground)',
-                  border: '1px solid var(--border)',
-                  boxShadow: 'var(--shadow)'
+                  background: "var(--card)",
+                  color: "var(--card-foreground)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "var(--shadow)",
                 }}
               >
                 See packages
@@ -91,24 +95,25 @@ export default function Hero() {
           </div>
 
           <div className="relative">
-            <div 
+            <div
               className="relative overflow-hidden"
               style={{
-                aspectRatio: '16 / 9',
-                borderRadius: 'var(--radius)',
-                border: '1px solid var(--border)',
-                background: 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 10%, transparent), transparent)',
-                boxShadow: 'var(--shadow)'
+                aspectRatio: "16 / 9",
+                borderRadius: "var(--radius)",
+                border: "1px solid var(--border)",
+                background:
+                  "linear-gradient(180deg, color-mix(in srgb, var(--primary) 10%, transparent), transparent)",
+                boxShadow: "var(--shadow)",
               }}
             >
               {/* Static Image - shown initially and as fallback */}
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop"
-                alt="Cheezy Hut Photo Booth Setup" 
+                alt="Cheezy Hut Photo Booth Setup"
                 className="w-full h-full object-cover transition-opacity duration-800"
-                style={{ 
-                  borderRadius: '12px',
-                  opacity: videoLoaded ? 0.3 : 1
+                style={{
+                  borderRadius: "12px",
+                  opacity: videoLoaded ? 0.3 : 1,
                 }}
                 loading="lazy"
               />
@@ -122,21 +127,21 @@ export default function Hero() {
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
                 className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-800"
-                style={{ 
-                  borderRadius: '12px',
+                style={{
+                  borderRadius: "12px",
                   opacity: videoLoaded ? 1 : 0,
-                  pointerEvents: 'none'
+                  pointerEvents: "none",
                 }}
                 onLoad={() => setVideoLoaded(true)}
               />
 
               {/* Transparent overlay to block interactions */}
-              <div 
+              <div
                 className="absolute top-0 left-0 w-full h-full bg-transparent z-10 transition-opacity duration-800"
-                style={{ 
-                  borderRadius: '12px',
+                style={{
+                  borderRadius: "12px",
                   opacity: 1,
-                  pointerEvents: 'none'
+                  pointerEvents: "none",
                 }}
                 aria-hidden="true"
               />
