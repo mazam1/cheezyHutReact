@@ -10,8 +10,8 @@ import './index.css';
 export default function App() {
   return (
     <div className="min-h-screen scroll-smooth" style={{
-      backgroundColor: "var(--bg)",
-      color: "var(--text)",
+      backgroundColor: "var(--background)",
+      color: "var(--foreground)",
     }}>
 
       <Header />

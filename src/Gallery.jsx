@@ -2,37 +2,54 @@ import React from "react";
 
 export default function Gallery() {
   const images = [
-    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=800&h=500&q=80",
-    "https://images.unsplash.com/photo-1438557068880-c5f474830377?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1511389026070-a14ae610a1be?q=80&w=800&auto=format&fit=crop",
+    "https://www.cheezyhut.com/assets/images/gallery_1.png",
+    "https://www.cheezyhut.com/assets/images/gallery_2.png", 
+    "https://www.cheezyhut.com/assets/images/gallery_3.png",
+    "https://www.cheezyhut.com/assets/images/gallery_4.png",
+    "https://www.cheezyhut.com/assets/images/gallery_5.png",
+    "https://www.cheezyhut.com/assets/images/gallery_6.png",
   ];
 
   return (
-    <section
-      id="gallery"
-      className="py-20 px-5  flex justify-center"
-    >
-      <div className="w-[1320px] h-[593.75px] mx-auto px-6 overflow-hidden">
-        <div className="mb-8 text-left">
-          <h2 className="text-4xl font-bold mb-6">Gallery</h2>
-          <p className="text-xl text-gray-400">Highlights we love.</p>
+    <section id="gallery" className="py-12 lg:py-20">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col gap-4 mb-12">
+          <h2 
+            className="font-bold leading-tight"
+            style={{
+              fontSize: 'clamp(1.6rem, 1rem + 2.2vw, 2.4rem)',
+              lineHeight: '1.2',
+              color: 'var(--foreground)'
+            }}
+          >
+            Gallery
+          </h2>
+          <p 
+            className="leading-relaxed"
+            style={{ 
+              fontSize: 'clamp(1.05rem, 1rem + 0.6vw, 1.25rem)',
+              color: 'var(--muted)'
+            }}
+          >
+            Highlights we love.
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[calc(593.75px-100px)] overflow-y-auto">
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((src, i) => (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-            >
-              <div className="aspect-square overflow-hidden">
-                <img
-                  src={src}
-                  alt={`Gallery ${i + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
+            <div key={i} className="gallery-item">
+              <img
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                src={src}
+                alt={`Gallery Image ${i + 1}`}
+                loading="lazy"
+                style={{
+                  aspectRatio: '3 / 2',
+                  borderRadius: 'var(--radius)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)'
+                }}
+              />
             </div>
           ))}
         </div>
