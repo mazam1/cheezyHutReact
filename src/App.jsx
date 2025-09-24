@@ -9,7 +9,11 @@ import './index.css';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white scroll-smooth">
+    <div className="min-h-screen scroll-smooth" style={{
+      backgroundColor: "var(--bg)",
+      color: "var(--text)",
+    }}>
+
       <Header />
       <main>
         <Hero />

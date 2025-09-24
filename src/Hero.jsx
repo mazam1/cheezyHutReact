@@ -2,41 +2,46 @@ import React from "react";
 
 export default function Hero() {
   return (
-    <section id="top" className="min-h-screen flex items-center justify-center py-20 px-5 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+    <section id="top" className="text-white py-6">
+      <div className="max-w-[1320px] mx-auto px-5 grid lg:grid-cols-2 gap-6 items-center">
         <div className="space-y-8">
           <div className="flex flex-wrap gap-4">
-            <div className="bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium">
-              ✨ <strong>Studio-quality lighting</strong>
+            {/* Badge 1 */}
+            <div className="bg-[#6c757d] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
+              ✨ <span className="ml-1">Studio-quality lighting</span>
             </div>
-            <div className="bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium">
-              ⚡ <strong>Instant prints & sharing</strong>
+
+            {/* Badge 2 */}
+            <div className="bg-[#6c757d] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
+              ⚡ <span className="ml-1">Instant prints &amp; sharing</span>
             </div>
-            <div className="bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium">
-              📸 <strong>Detroit & beyond</strong>
+
+            {/* Badge 3 */}
+            <div className="bg-[#6c757d] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
+              📸 <span className="ml-1">Detroit &amp; beyond</span>
             </div>
           </div>
 
-          <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
-            Say Cheezy!
-          </h1>
+          <h1 className="text-6xl leading-tight">Say Cheezy!</h1>
 
-          <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
+          {/* Fixed size paragraph */}
+          <p className="text-xl text-gray-300 leading-relaxed w-[624px] h-[96px] overflow-hidden">
             Cheezy Hut brings big-time energy with pro lighting, custom overlays,
             and instant prints! Perfect for weddings, corporate events, schools,
             and parties.
           </p>
 
+          {/* Compact Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href="#book"
-              className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-blue-700 transition-all duration-200 text-center"
+              className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-blue-700 transition-all duration-200 text-center"
             >
               Book Cheezy Hut
             </a>
             <a
               href="#packages"
-              className="bg-slate-700 text-white px-8 py-4 rounded-full font-semibold text-lg border border-slate-600 hover:bg-slate-600 transition-all duration-200 text-center"
+              className="bg-slate-700 text-white px-6 py-3 rounded-full font-semibold border border-slate-600 hover:bg-slate-600 transition-all duration-200 text-center"
             >
               See packages
             </a>

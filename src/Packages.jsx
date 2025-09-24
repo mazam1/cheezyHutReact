@@ -7,6 +7,7 @@ export default function Packages() {
       price: "$449",
       duration: "/ 2 hrs",
       features: [
+        "Simple Package - $449 / 2 hours",
         "Professional photo booth setup",
         "Digital gallery access",
         "Basic props included",
@@ -21,6 +22,7 @@ export default function Packages() {
       price: "$549",
       duration: "/ 3 hrs",
       features: [
+        "Starter Package - $549 / 3 hours",
         "Everything in Simple package",
         "Extended 3-hour service",
         "Expanded prop collection",
@@ -34,6 +36,7 @@ export default function Packages() {
       price: "$799",
       duration: "/ 3 hrs",
       features: [
+        "Party Favorite Package - $799 / 3 hours",
         "Everything in Starter package",
         "Multiple backdrop choices",
         "Extensive prop collection",
@@ -44,13 +47,14 @@ export default function Packages() {
         "Professional attendant"
       ],
       description: "Most popular choice! Perfect for weddings, graduations, and special celebrations.",
-      isPopular: true
+      isPopular: false
     },
     {
       name: "All-Out",
       price: "$1,149",
       duration: "/ 4 hrs",
       features: [
+        "All-Out Package - $1,149 / 4 hours",
         "Everything in Party Favorite package",
         "Extended 4-hour premium service",
         "Premium backdrop collection",
@@ -66,26 +70,29 @@ export default function Packages() {
   ];
 
   return (
-    <section id="packages" className="py-20 px-5 bg-slate-800 text-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+    <section
+      id="packages"
+      className="py-20 px-5 flex justify-center font-sans"
+      style={{
+        backgroundColor: "var(--bg)",
+        color: "var(--text)",
+      }}
+    >
+      <div className="w-[1320px] mx-auto">
+        {/* Heading Section */}
+        <div className="mb-16 text-left">
           <h2 className="text-4xl font-bold mb-4">Packages</h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl">
             Straightforward pricing. Every package includes pro lighting, an attentive host, and instant sharing.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {plans.map((plan, i) => (
-            <div key={i} className={`relative bg-slate-900 border border-slate-700 rounded-xl p-6 flex flex-col hover:border-slate-600 transition-all duration-300 ${plan.isPopular ? 'ring-2 ring-blue-500' : ''}`}>
-              {plan.isPopular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-
+            <div
+              key={i}
+              className="relative bg-slate-900 border border-slate-700 rounded-xl p-6 flex flex-col hover:border-slate-600 transition-all duration-300 font-sans"
+            >
               <div className="mb-6">
                 <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline gap-1">

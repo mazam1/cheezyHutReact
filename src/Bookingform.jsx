@@ -1,455 +1,385 @@
 import React, { useState } from "react";
 
-const STEP_TITLES = [
-  "Contact",
-  "Date & Time",
-  "Venue Details",
-  "Package & Payment",
-];
+// helper function to generate 15-min interval slots
+function generateTimeSlots(start = "08:00", end = "23:45") {
+  const slots = [];
+  let [h, m] = start.split(":").map(Number);
+  const [endH, endM] = end.split(":").map(Number);
+
+  while (h < endH || (h === endH && m <= endM)) {
+    const date = new Date();
+    date.setHours(h, m, 0);
+
+    let hours = date.getHours();
+    let minutes = date.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    slots.push(`${hours}:${minutes} ${ampm}`);
+
+    m += 15;
+    if (m >= 60) {
+      h++;
+      m = 0;
+    }
+  }
+  return slots;
+}
 
 export default function BookingForm() {
-  const [step, setStep] = useState(0);
-
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
+    // Step 1
     name: "",
     email: "",
     phone: "",
     company: "",
+
+    // Step 2
     date: "",
     time: "",
-    duration: "3",
+    duration: "3.5h",
+    end: "12:30 PM",
+
+    // Step 3
+    venue: "",
     city: "",
     address: "",
     notes: "",
+
+    // Step 4
     package: "Simple",
-    addons: {
-      glamFilter: false,
-      photoSlideshow: false,
-      premiumBackdrop: false,
-      prints: false,
-      sharingKiosk: false,
-    },
-    couponCode: "",
-    paymentOption: "deposit", // deposit or full
-    termsAccepted: false,
+    addons: [],
+    coupon: "",
+    payNow: false,
   });
 
-  const PACKAGES = {
-    "Simple": { price: 449, duration: 2 },
-    "Starter": { price: 549, duration: 3 },
-    "Party Favorite": { price: 799, duration: 3 },
-    "All-Out": { price: 1149, duration: 4 },
+  const isStepValid = () => {
+    if (step === 1) return form.name && form.email && form.phone && form.company;
+    if (step === 2) return form.date && form.time;
+    if (step === 3) return form.venue && form.city && form.address;
+    return true;
   };
 
-  const ADDONS = {
-    glamFilter: { name: "Glam Filter", price: 100 },
-    photoSlideshow: { name: "Photo Slideshow", price: 400 },
-    premiumBackdrop: { name: "Premium Backdrop", price: 200 },
-    prints: { name: "Prints", price: 150 },
-    sharingKiosk: { name: "Sharing Kiosk", price: 120 },
-  };
-
-  const TIME_SLOTS = [
-    "8:00 AM", "8:15 AM", "8:30 AM", "8:45 AM", "9:00 AM", "9:15 AM", "9:30 AM", "9:45 AM",
-    "10:00 AM", "10:15 AM", "10:30 AM", "10:45 AM", "11:00 AM", "11:15 AM", "11:30 AM", "11:45 AM",
-    "12:00 PM", "12:15 PM", "12:30 PM", "12:45 PM", "1:00 PM", "1:15 PM", "1:30 PM", "1:45 PM",
-    "2:00 PM", "2:15 PM", "2:30 PM", "2:45 PM", "3:00 PM", "3:15 PM", "3:30 PM", "3:45 PM",
-    "4:00 PM", "4:15 PM", "4:30 PM", "4:45 PM", "5:00 PM", "5:15 PM", "5:30 PM", "5:45 PM",
-    "6:00 PM", "6:15 PM", "6:30 PM", "6:45 PM", "7:00 PM", "7:15 PM", "7:30 PM", "7:45 PM",
-    "8:00 PM", "8:15 PM", "8:30 PM", "8:45 PM", "9:00 PM", "9:15 PM", "9:30 PM", "9:45 PM",
-    "10:00 PM"
-  ];
-
-  const DURATIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-  const updateForm = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const updateAddon = (addon, checked) => {
-    setForm(prev => ({
-      ...prev,
-      addons: { ...prev.addons, [addon]: checked }
-    }));
-  };
-
-  const calculateTotals = () => {
-    const packagePrice = PACKAGES[form.package]?.price || 0;
-    const addonsTotal = Object.entries(form.addons).reduce((sum, [key, checked]) => {
-      return sum + (checked ? ADDONS[key].price : 0);
-    }, 0);
-    const subtotal = packagePrice + addonsTotal;
-    const paymentNow = form.paymentOption === "full" ? subtotal + 60 : Math.round(subtotal * 0.5); // 50% deposit + $60 bonus for full payment
-    const balanceDue = subtotal - paymentNow;
-
-    return {
-      packagePrice,
-      addonsTotal,
-      subtotal,
-      paymentNow,
-      balanceDue,
-      bonusTime: form.paymentOption === "full" ? "+30 minutes" : null
-    };
-  };
-
-  const validateStep = () => {
-    if (step === 0) {
-      if (!form.name.trim() || !form.email.trim() || !form.phone.trim() || !form.company.trim()) {
-        return "Please fill name, a valid email, phone, and company/school to continue.";
-      }
-    }
-    if (step === 1) {
-      if (!form.date) return "Please add an event date, start time, and duration.";
-      if (!form.time) return "Please select a start time.";
-    }
-    if (step === 2) {
-      if (!form.city.trim() || !form.address.trim()) {
-        return "Please add venue, city, address, and notes.";
-      }
-    }
-    if (step === 3) {
-      if (!form.termsAccepted) {
-        return "Please choose a package and accept the terms of service.";
-      }
-    }
-    return null;
-  };
-
-  const next = () => {
-    const error = validateStep();
-    if (error) {
-      alert(error);
-      return;
-    }
-    if (step < STEP_TITLES.length - 1) {
-      setStep(step + 1);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox") {
+      setForm((prev) => ({
+        ...prev,
+        addons: checked
+          ? [...prev.addons, value]
+          : prev.addons.filter((a) => a !== value),
+      }));
+    } else if (type === "radio") {
+      setForm({ ...form, [name]: value });
+    } else {
+      setForm({ ...form, [name]: value });
     }
   };
-
-  const back = () => {
-    if (step > 0) setStep(step - 1);
-  };
-
-  const handleSubmit = () => {
-    const error = validateStep();
-    if (error) {
-      alert(error);
-      return;
-    }
-    alert("Booking submitted successfully!");
-  };
-
-  const totals = calculateTotals();
 
   return (
-    <section id="book" className="py-20 px-5 bg-slate-900 text-white">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Book Cheezy Hut</h2>
-          <p className="text-xl text-gray-400">
-            This quick 4-step request helps us lock your date, collect a deposit, and tailor your package.
-          </p>
-        </div>
+    <section
+      id="booking"
+      className="py-20 px-5 bg-[var(--bg)] text-white min-h-[1023.69px]"
+    >
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold mb-2">Book Cheezy Hut</h2>
+        <p className="text-gray-400 mb-8">
+          This quick 4-step request helps us lock your date, collect a deposit,
+          and tailor your package.
+        </p>
 
-        {/* Step Indicators */}
-        <div className="flex justify-center mb-12">
-          <div className="flex space-x-2">
-            {STEP_TITLES.map((title, i) => (
-              <button
-                key={i}
-                onClick={() => setStep(i)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  i === step
-                    ? 'bg-blue-600 text-white'
-                    : i < step
-                    ? 'bg-green-600 text-white'
-                    : 'bg-slate-700 text-gray-400'
-                }`}
-              >
-                {i + 1} {title}
-              </button>
-            ))}
+        <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
+          {/* Step Buttons */}
+          <div className="flex gap-3 mb-6">
+            {["Contact", "Date & Time", "Venue Details", "Package & Payment"].map(
+              (label, i) => (
+                <button
+                  key={i}
+                  className={`flex-1 px-4 py-2 rounded border text-sm font-medium ${
+                    step === i + 1
+                      ? "bg-blue-600 text-white"
+                      : "bg-transparent border-gray-600 text-gray-400"
+                  }`}
+                  disabled
+                >
+                  {i + 1}. {label}
+                </button>
+              )
+            )}
           </div>
-        </div>
 
-        {/* Form Content */}
-        <div className="bg-slate-800 rounded-xl p-8 border border-slate-700">
-          {/* Step 1: Contact */}
-          {step === 0 && (
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Your name</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => updateForm('name', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                    placeholder="Enter your full name"
-                  />
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left: Form */}
+            <div className="flex-1">
+              {/* Step 1 */}
+              {step === 1 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["name", "email", "phone", "company"].map((field) => (
+                    <div key={field}>
+                      <label className="block text-sm mb-1 capitalize">
+                        {field === "company" ? "Company / School" : field}
+                      </label>
+                      <input
+                        type="text"
+                        name={field}
+                        value={form[field]}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117] focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => updateForm('email', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                    placeholder="your@email.com"
-                  />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Phone</label>
-                  <input
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => updateForm('phone', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Company / School</label>
-                  <input
-                    type="text"
-                    value={form.company}
-                    onChange={(e) => updateForm('company', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                    placeholder="Company or school name"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* Step 2: Date & Time */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Event date</label>
-                  <input
-                    type="date"
-                    value={form.date}
-                    onChange={(e) => updateForm('date', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Event Start Time</label>
-                  <select
-                    value={form.time}
-                    onChange={(e) => updateForm('time', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="">Select a time</option>
-                    {TIME_SLOTS.map(time => (
-                      <option key={time} value={time}>{time}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">How long are we partying for?</label>
-                  <select
-                    value={form.duration}
-                    onChange={(e) => updateForm('duration', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                  >
-                    {DURATIONS.map(hours => (
-                      <option key={hours} value={hours}>{hours} hour{hours !== 1 ? 's' : ''}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <p className="text-sm text-gray-400">Start between 8:00 AM and 10:00 PM. Max based on your start time: up to 8 hours (we leave by midnight).</p>
-            </div>
-          )}
-
-          {/* Step 3: Venue Details */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">What city is your event in?</label>
-                <input
-                  type="text"
-                  value={form.city}
-                  onChange={(e) => updateForm('city', e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="City name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Event address</label>
-                <input
-                  type="text"
-                  value={form.address}
-                  onChange={(e) => updateForm('address', e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="Full address"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Anything else?</label>
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => updateForm('notes', e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none"
-                  placeholder="Special instructions or notes..."
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Package & Payment */}
-          {step === 3 && (
-            <div className="space-y-8">
-              <div>
-                <label className="block text-sm font-medium mb-4">Package</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.entries(PACKAGES).map(([name, details]) => (
-                    <button
-                      key={name}
-                      onClick={() => updateForm('package', name)}
-                      className={`p-4 border rounded-lg text-left transition-all ${
-                        form.package === name
-                          ? 'border-blue-500 bg-blue-600 text-white'
-                          : 'border-slate-600 bg-slate-900 text-gray-300 hover:border-slate-500'
-                      }`}
+              {/* Step 2 */}
+              {step === 2 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm mb-1">Event date</label>
+                    <input
+                      type="date"
+                      name="date"
+                      value={form.date}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm mb-1">Event start time</label>
+                    <select
+                      name="time"
+                      value={form.time}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
                     >
-                      <div className="font-medium">{name}</div>
-                      <div className="text-sm opacity-75">${details.price} / {details.duration} hrs</div>
-                    </button>
-                  ))}
+                      <option value="">Select a time</option>
+                      {generateTimeSlots("08:00", "23:45").map((slot) => (
+                        <option key={slot} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Add-ons */}
-              <div>
-                <h3 className="text-lg font-medium mb-4">Add-ons</h3>
-                <div className="space-y-3">
-                  {Object.entries(ADDONS).map(([key, addon]) => (
-                    <label key={key} className="flex items-center justify-between p-3 bg-slate-900 border border-slate-600 rounded-lg cursor-pointer hover:border-slate-500">
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          checked={form.addons[key]}
-                          onChange={(e) => updateAddon(key, e.target.checked)}
-                          className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500"
-                        />
-                        <span className="text-sm">{addon.name}</span>
-                      </div>
-                      <span className="text-sm font-medium">${addon.price}</span>
+              {/* Step 3 */}
+              {step === 3 && (
+                <div className="grid grid-cols-1 gap-4">
+                  {[
+                    ["venue", "Where is your event being hosted?"],
+                    ["city", "What city is your event in?"],
+                    ["address", "Event address"],
+                  ].map(([field, label]) => (
+                    <div key={field}>
+                      <label className="block text-sm mb-1">{label}</label>
+                      <input
+                        type="text"
+                        name={field}
+                        value={form[field]}
+                        onChange={handleChange}
+                        placeholder={field === "city" ? "Detroit, MI" : ""}
+                        className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="block text-sm mb-1">Anything else?</label>
+                    <textarea
+                      name="notes"
+                      value={form.notes}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4 */}
+              {step === 4 && (
+                <div className="space-y-6">
+                  {/* Package */}
+                  <div>
+                    <label className="block text-sm mb-1">Package</label>
+                    <select
+                      name="package"
+                      value={form.package}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
+                    >
+                      <option>Simple</option>
+                      <option>Starter</option>
+                      <option>Party Favorite</option>
+                      <option>All-Out</option>
+                    </select>
+                  </div>
+
+                  {/* Duration */}
+                  <div>
+                    <label className="block text-sm mb-1">
+                      How long are we partying for?
                     </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Coupon Code */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Coupon Code (Optional)</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={form.couponCode}
-                    onChange={(e) => updateForm('couponCode', e.target.value)}
-                    className="flex-1 px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                    placeholder="Enter coupon code"
-                  />
-                  <button className="px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
-                    Apply
-                  </button>
-                </div>
-              </div>
-
-              {/* Payment Options */}
-              <div>
-                <h3 className="text-lg font-medium mb-4">Payment</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <p className="text-gray-400 text-xs mb-1">
+                      Max based on your start time: up to 8 hours (we leave by
+                      midnight).
+                    </p>
                     <input
-                      type="radio"
-                      name="payment"
-                      checked={form.paymentOption === 'deposit'}
-                      onChange={() => updateForm('paymentOption', 'deposit')}
-                      className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 focus:ring-blue-500"
+                      type="text"
+                      name="duration"
+                      value={form.duration}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
                     />
-                    <span className="text-sm">50% deposit now + 50% due 14 days before event (industry standard)</span>
-                  </label>
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={form.paymentOption === 'full'}
-                      onChange={() => updateForm('paymentOption', 'full')}
-                      className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm">Pay in full now — +30 minutes free</span>
-                  </label>
-                </div>
-              </div>
+                  </div>
 
-              {/* Terms */}
-              <label className="flex items-start space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.termsAccepted}
-                  onChange={(e) => updateForm('termsAccepted', e.target.checked)}
-                  className="mt-1 w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500"
-                />
-                <span className="text-sm text-gray-400">
-                  I agree to the Terms of Service and Privacy Policy
-                </span>
-              </label>
+                  {/* Add-ons */}
+                  <div>
+                    <label className="block text-sm mb-2">Add-ons</label>
+                    {[
+                      ["Glam Filter", "$100.00"],
+                      ["Photo Slideshow", "$400.00"],
+                      ["Premium Backdrop", "$200.00"],
+                      ["Prints", "$150.00"],
+                      ["Sharing Kiosk", "$120.00"],
+                    ].map(([label, price]) => (
+                      <div
+                        key={label}
+                        className="flex items-center justify-between mb-2"
+                      >
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            value={label}
+                            checked={form.addons.includes(label)}
+                            onChange={handleChange}
+                          />
+                          <span>{label}</span>
+                        </label>
+                        <span className="text-gray-300">{price}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Coupon */}
+                  <div>
+                    <label className="block text-sm mb-1">
+                      Coupon Code (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="coupon"
+                      value={form.coupon}
+                      onChange={handleChange}
+                      placeholder="Enter coupon code"
+                      className="w-full px-3 py-2 rounded border border-gray-700 bg-[#0d1117]"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Enter a coupon code to get a discount
+                    </p>
+                  </div>
+
+                  {/* Slot */}
+                  <div>
+                    <h4 className="font-medium mb-2">Your slot</h4>
+                    <p className="text-sm text-gray-300">
+                      Date: {form.date || "—"} <br />
+                      Start: {form.time || "—"} <br />
+                      Duration: {form.duration || "—"} <br />
+                      End (est.): {form.end || "—"} <br />
+                      Venue: {form.venue || "—"} <br />
+                      City: {form.city || "—"} <br />
+                      Address: {form.address || "—"}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      We'll hold your slot once payment is made.
+                    </p>
+                  </div>
+
+                  {/* Payment */}
+                  <div>
+                    <h4 className="font-medium mb-2">Payment</h4>
+                    <label className="flex items-center gap-2 mb-2">
+                      <input
+                        type="radio"
+                        name="payNow"
+                        value="full"
+                        checked={form.payNow === "full"}
+                        onChange={handleChange}
+                      />
+                      Pay in full now — +30 minutes free
+                    </label>
+                    <p className="text-sm text-gray-300">Payment now: $0.00</p>
+                    {form.payNow === "full" && (
+                      <p className="text-xs text-green-400 mt-1">
+                        Thanks for paying in full! We'll add +30 minutes to your
+                        session.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Terms */}
+                  <div className="flex items-center gap-2 mt-4">
+                    <input type="checkbox" id="tos" />
+                    <label htmlFor="tos" className="text-sm text-gray-300">
+                      I agree to the Terms of Service and Privacy Policy
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between mt-6">
+                <button
+                  disabled={step === 1}
+                  onClick={() => setStep(step - 1)}
+                  className="px-4 py-2 rounded bg-gray-700 text-gray-300 disabled:opacity-50"
+                >
+                  ← Back
+                </button>
+                <button
+                  onClick={() => setStep(step + 1)}
+                  disabled={!isStepValid()}
+                  className="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-50"
+                >
+                  {step === 4 ? "Submit" : "Next →"}
+                </button>
+              </div>
             </div>
-          )}
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between items-center mt-8 pt-6 border-t border-slate-700">
-            <button
-              onClick={back}
-              disabled={step === 0}
-              className="px-6 py-3 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ← Back
-            </button>
-
-            <button
-              onClick={step === STEP_TITLES.length - 1 ? handleSubmit : next}
-              className="px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors"
-            >
-              {step === STEP_TITLES.length - 1 ? 'Complete Order' : 'Next →'}
-            </button>
+            {/* Right: Summary */}
+            <div className="w-full lg:w-80 bg-[#161b22] border border-gray-700 rounded-lg p-4 text-sm">
+              <h3 className="font-medium mb-3">Summary</h3>
+              <ul className="space-y-2 text-gray-300">
+                {[
+                  ["Name", form.name || "—"],
+                  ["Email", form.email || "—"],
+                  ["Date", form.date || "—"],
+                  ["Start", form.time || "—"],
+                  ["Duration", form.duration || "—"],
+                  ["End (est.)", form.end || "—"],
+                  ["Venue", form.venue || "—"],
+                  ["City", form.city || "—"],
+                  ["Address", form.address || "—"],
+                  ["Package", form.package || "—"],
+                  ["Add-ons", form.addons.join(", ") || "None"],
+                  ["Coupon", form.coupon || "—"],
+                ].map(([label, value], i) => (
+                  <li
+                    key={i}
+                    className={`flex justify-between ${
+                      i !== 12 ? "border-b border-gray-700 pb-1" : ""
+                    }`}
+                  >
+                    <span>{label}:</span>
+                    <span>{value}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-
-        {/* Summary */}
-        {step === STEP_TITLES.length - 1 && (
-          <div className="mt-8 bg-slate-800 rounded-xl p-6 border border-slate-700">
-            <h3 className="text-xl font-bold mb-4">Summary</h3>
-            <div className="grid md:grid-cols-2 gap-6 text-sm">
-              <div className="space-y-2">
-                <div><strong>Name:</strong> {form.name || '—'}</div>
-                <div><strong>Email:</strong> {form.email || '—'}</div>
-                <div><strong>Date:</strong> {form.date || '—'}</div>
-                <div><strong>Start:</strong> {form.time || '—'}</div>
-                <div><strong>Duration:</strong> {form.duration} hours</div>
-                <div><strong>Venue:</strong> {form.address || '—'}</div>
-                <div><strong>City:</strong> {form.city || '—'}</div>
-              </div>
-              <div className="space-y-2">
-                <div><strong>Package:</strong> {form.package}</div>
-                <div><strong>Add-ons:</strong> ${totals.addonsTotal}</div>
-                <div><strong>Estimated total:</strong> ${totals.subtotal}</div>
-                <div><strong>Payment now:</strong> ${totals.paymentNow}</div>
-                <div><strong>Balance due:</strong> ${totals.balanceDue > 0 ? `$${totals.balanceDue}` : '—'}</div>
-                {totals.bonusTime && <div><strong>Bonus time:</strong> {totals.bonusTime}</div>}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

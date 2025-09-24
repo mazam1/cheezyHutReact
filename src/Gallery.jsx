@@ -11,16 +11,21 @@ export default function Gallery() {
   ];
 
   return (
-    <section id="gallery" className="py-20 px-5 bg-slate-900 text-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Gallery</h2>
+    <section
+      id="gallery"
+      className="py-20 px-5  flex justify-center"
+    >
+      <div className="w-[1320px] h-[593.75px] mx-auto px-6 overflow-hidden">
+        <div className="mb-8 text-left">
+          <h2 className="text-4xl font-bold mb-6">Gallery</h2>
           <p className="text-xl text-gray-400">Highlights we love.</p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[calc(593.75px-100px)] overflow-y-auto">
           {images.map((src, i) => (
-            <div key={i} className="group relative overflow-hidden rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            >
               <div className="aspect-square overflow-hidden">
                 <img
                   src={src}
@@ -35,4 +40,3 @@ export default function Gallery() {
     </section>
   );
 }
-
